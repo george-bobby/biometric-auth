@@ -1,0 +1,15 @@
+face_recognition
+opencv-python
+numpy
+SpeechRecognition
+resemblyzer
+sounddevice
+scipy
+pydub
+pygame
+fastapi
+uvicorn
+python-multipart
+supabase
+python-dotenv
+Pillow
