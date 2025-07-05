@@ -20,7 +20,7 @@ export const SignupForm: React.FC = () => {
   const [selectedProfile, setSelectedProfile] = useState<ProfileType | undefined>()
   const [userId, setUserId] = useState<string | null>(null)
 
-  const { signup, isLoading, error } = useAuth()
+  const { signup, isLoading, error, setBiometricVerified } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -48,7 +48,7 @@ export const SignupForm: React.FC = () => {
         setCurrentStep('verification')
       }
     } catch (error) {
-      console.error('Signup failed:', error)
+      // Signup failed
     }
   }
 
@@ -73,14 +73,15 @@ export const SignupForm: React.FC = () => {
     }
   }
 
-  const handleVerificationComplete = (success: boolean, data?: any) => {
+  const handleVerificationComplete = async (success: boolean, data?: any) => {
     if (success) {
       // Verification successful - user is now fully registered
-      console.log('Verification completed successfully:', data)
+      // Mark biometric verification as complete
+      await setBiometricVerified(true)
+
       // The AuthContext should handle navigation to dashboard
     } else {
       // Verification failed - allow retry or go back
-      console.log('Verification failed')
     }
   }
 

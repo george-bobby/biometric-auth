@@ -195,8 +195,11 @@ export const ThreeStepVerification: React.FC<ThreeStepVerificationProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-center">
-            3-Step Biometric Verification for {profile}
+            Simultaneous Biometric Verification for {profile}
           </CardTitle>
+          <p className="text-center text-gray-600 mt-2">
+            Face, voice, and lip sync verification in one recording
+          </p>
         </CardHeader>
         <CardContent>
           <div className="flex justify-center space-x-8">

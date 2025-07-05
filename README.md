@@ -150,8 +150,9 @@ Confidence-based color codes:
 
 ### Frontend
 
-- `SimultaneousCapture.tsx`: Captures data, runs face-api.js
-- `ThreeStepVerification.tsx`: Handles step progression, results, retries
+- `SimultaneousCapture.tsx`: Records video+audio simultaneously, extracts face/voice/video data, runs face-api.js
+- `ThreeStepVerification.tsx`: Orchestrates the simultaneous verification process
+- `CombinedAuth.tsx`: Main authentication interface with improved UX
 
 ### Backend
 
@@ -176,20 +177,25 @@ pip install mediapipe opencv-python-headless
 
 ## 🔁 Data Flow Summary
 
-**Face Verification:**
+**Simultaneous Verification (New):**
 ```
-Video → Canvas → Base64 → API → Result
-```
-
-**Voice Verification:**
-```
-Audio → MediaRecorder → API → Result
+Single Video+Audio Recording → Extract Frame + Audio + Video →
+Face API + Voice API + Lip Sync API → Combined Results
 ```
 
-**Lip Sync Verification:**
+**Legacy Individual Verification:**
 ```
-Video + Audio → MediaPipe → Result
+Face: Video → Canvas → Base64 → API → Result
+Voice: Audio → MediaRecorder → API → Result
+Lip Sync: Video + Audio → MediaPipe → Result
 ```
+
+## 🎯 Key Improvements
+
+- **Perfect Synchronization**: Voice and face data captured simultaneously ensures perfect lip sync correlation
+- **Better User Experience**: Single 5-second recording instead of 3 separate steps
+- **Faster Authentication**: All verifications processed in parallel
+- **Improved Accuracy**: Synchronized data provides better lip sync detection
 
 ## Example API Response: `/api/lip-sync-check`
 

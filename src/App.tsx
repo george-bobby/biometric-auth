@@ -37,6 +37,10 @@ const AppRoutes: React.FC = () => {
     if (user?.username === 'test' || user?.email === 'test@example.com') {
       return '/dashboard'
     }
+    // If user has completed biometric verification, go to dashboard
+    if (user?.biometric_verified) {
+      return '/dashboard'
+    }
     // Otherwise, require biometric authentication
     return '/auth'
   }

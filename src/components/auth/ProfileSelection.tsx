@@ -34,7 +34,6 @@ export const ProfileSelection: React.FC<ProfileSelectionProps> = ({
         setProfiles(response.profiles)
       } catch (err) {
         setError('Failed to load available profiles')
-        console.error('Error loading profiles:', err)
       } finally {
         setIsLoading(false)
       }

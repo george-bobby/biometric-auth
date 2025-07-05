@@ -9,6 +9,7 @@ interface AuthContextType extends AuthState {
   updateBiometricData: (data: { face_data?: string; voice_data?: string }) => Promise<void>
   updateProfile: (profile: ProfileType) => Promise<void>
   updateAuthenticationMode: (mode: AuthenticationMode) => Promise<void>
+  setBiometricVerified: (verified: boolean) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -97,6 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             authentication_mode: session.user.user_metadata?.authentication_mode,
             face_data: session.user.user_metadata?.face_data,
             voice_data: session.user.user_metadata?.voice_data,
+            biometric_verified: session.user.user_metadata?.biometric_verified || false,
             created_at: session.user.created_at,
             updated_at: session.user.updated_at || session.user.created_at
           }
@@ -267,6 +269,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           authentication_mode: updatedUser.user.user_metadata?.authentication_mode,
           face_data: updatedUser.user.user_metadata?.face_data,
           voice_data: updatedUser.user.user_metadata?.voice_data,
+          biometric_verified: updatedUser.user.user_metadata?.biometric_verified || false,
           created_at: updatedUser.user.created_at,
           updated_at: updatedUser.user.updated_at || updatedUser.user.created_at
         }
@@ -307,6 +310,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           authentication_mode: updatedUser.user.user_metadata?.authentication_mode,
           face_data: updatedUser.user.user_metadata?.face_data,
           voice_data: updatedUser.user.user_metadata?.voice_data,
+          biometric_verified: updatedUser.user.user_metadata?.biometric_verified || false,
           created_at: updatedUser.user.created_at,
           updated_at: updatedUser.user.updated_at || updatedUser.user.created_at
         }
@@ -314,6 +318,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to update authentication mode' })
+    }
+  }
+
+  const setBiometricVerified = async (verified: boolean) => {
+    dispatch({ type: 'SET_LOADING', payload: true })
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        throw new Error('User not authenticated')
+      }
+
+      const { data: updatedUser, error } = await supabase.auth.updateUser({
+        data: {
+          ...user.user_metadata,
+          biometric_verified: verified,
+        }
+      })
+
+      if (error) {
+        throw new Error(error.message)
+      }
+
+      if (updatedUser.user) {
+        console.log('Biometric verification status updated:', verified)
+        const userWithBiometric: User = {
+          id: updatedUser.user.id,
+          username: updatedUser.user.user_metadata?.username || updatedUser.user.email?.split('@')[0] || '',
+          email: updatedUser.user.email,
+          profile: updatedUser.user.user_metadata?.profile,
+          authentication_mode: updatedUser.user.user_metadata?.authentication_mode,
+          face_data: updatedUser.user.user_metadata?.face_data,
+          voice_data: updatedUser.user.user_metadata?.voice_data,
+          biometric_verified: updatedUser.user.user_metadata?.biometric_verified || false,
+          created_at: updatedUser.user.created_at,
+          updated_at: updatedUser.user.updated_at || updatedUser.user.created_at
+        }
+        dispatch({ type: 'SET_USER', payload: userWithBiometric })
+      }
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to update biometric verification status' })
     }
   }
 
@@ -325,7 +371,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       logout,
       updateBiometricData,
       updateProfile,
-      updateAuthenticationMode
+      updateAuthenticationMode,
+      setBiometricVerified
     }}>
       {children}
     </AuthContext.Provider>

@@ -16,6 +16,7 @@ export interface User {
   authentication_mode?: AuthenticationMode
   face_data?: string
   voice_data?: string
+  biometric_verified?: boolean
   created_at: string
   updated_at: string
 }

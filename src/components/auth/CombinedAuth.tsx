@@ -33,7 +33,7 @@ export const CombinedAuth: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const { updateBiometricData, user } = useAuth()
+  const { updateBiometricData, user, setBiometricVerified } = useAuth()
   const navigate = useNavigate()
 
   // Check if user has required profile
@@ -143,9 +143,8 @@ export const CombinedAuth: React.FC = () => {
       timerRef.current = setInterval(() => {
         setRecordingTime(prev => prev + 1)
       }, 1000)
-      
+
     } catch (error) {
-      console.error('Error accessing microphone:', error)
       setStatus('error')
     }
   }
@@ -195,7 +194,7 @@ export const CombinedAuth: React.FC = () => {
             voice_data: base64Data
           })
         } catch (error) {
-          console.error('Biometric data storage failed:', error)
+          // Biometric data storage failed
         }
       }
       reader.readAsDataURL(audioBlob)
@@ -217,6 +216,9 @@ export const CombinedAuth: React.FC = () => {
 Face: ${faceMatch?.name} (${faceMatch?.similarity}%)
 Voice: ${voiceMatch?.name} (${voiceMatch?.similarity}%)`)
         setStatus('success')
+
+        // Mark biometric verification as complete
+        await setBiometricVerified(true)
 
         // Redirect to dashboard after successful authentication
         setTimeout(() => {
