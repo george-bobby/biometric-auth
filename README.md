@@ -1,63 +1,53 @@
 # 🔗 Biometric Authentication Setup Guide
 
-This guide explains how to run your integrated biometric authentication system with React frontend and Python backend.
+A guide to run the biometric authentication system with a React frontend and Python backend.
 
 ## 📋 Prerequisites
 
-- **Node.js** (v16 or higher)
-- **Python** (v3.8 or higher)
-- **pip** (Python package manager)
-- **npm** or **bun** (Node.js package manager)
+- **Node.js** (v16+)
+- **Python** (v3.8+)
+- **pip**
+- **npm** or **bun**
 
 ## 🚀 Setup Instructions
 
-### 1. Install Python Dependencies
+### Install Dependencies
 
 ```bash
 pip install -r requirements.txt
-```
-
-### 2. Install Frontend Dependencies
-
-```bash
 npm install
 # or
 bun install
 ```
 
-### 3. Environment Configuration
+### Environment Configuration
 
-Your environment file is already configured:
+- Single environment file: `.env` (used by both frontend and backend)
 
-- **Single Environment File**: `.env` (contains both frontend and backend configuration)
+### Train Biometric Models
 
-### 4. Prepare Biometric Models
+Prepare sample data:
+- Faces: `face_recog/face_dataset/`
+- Voices: `voice_recog/voice_dataset/`
 
-Before running the system, you need to train the face and voice recognition models:
+Run training scripts:
 
 ```bash
-# Train face recognition model
 python face_recog/train_face.py
-
-# Train voice recognition model  
 python voice_recog/train_voice.py
 ```
 
-**Note**: Make sure you have sample data in:
-- `face_recog/face_dataset/` (folders with person names containing face images)
-- `voice_recog/voice_dataset/` (folders with person names containing voice recordings)
-
 ## 🏃‍♂️ Running the Application
 
-### Terminal 1: Start Backend Server
+### Backend
 
 ```bash
 python app.py
 ```
 
-The backend will start on `http://localhost:8000`
+Backend runs on `http://localhost:8000`
 
-### Terminal 2: Start Frontend Development Server
+### Frontend
 
 ```bash
 npm run dev
@@ -65,194 +55,144 @@ npm run dev
 bun dev
 ```
 
-The frontend will start on `http://localhost:5173`
+Frontend runs on `http://localhost:5173`
 
-## 🆕 New Features
+## 🆕 Key Features
 
-### Enhanced Authentication System
+### Authentication Modes
 
-This system now includes comprehensive biometric authentication with the following new features:
+- **Face:** Live camera or image upload
+- **Voice:** Real-time recording with phrase verification
+- **Combined:** Both face and voice
 
-#### **Authentication Modes**
-- **Face Authentication**: Live camera capture OR image upload
-- **Voice Authentication**: Real-time voice recording with phrase verification
-- **Combined Authentication**: Both face and voice for maximum security
+### Registration Flow
 
-#### **User Registration Flow**
-1. **Step 1**: Enter credentials (username, password, email)
-2. **Step 2**: Select profile (Fenny, George, or Jovin)
-3. **Step 3**: Choose authentication mode (Face, Voice, or Both)
+1. Enter credentials
+2. Select profile (Fenny, George, Jovin)
+3. Choose authentication mode
 
-#### **Profile-Based Authentication**
-- Users select from predefined profiles during signup
-- Each profile corresponds to trained models in the system
-- Authentication matches against specific profile's biometric data
+### Profile-Based Matching
 
-#### **Security Features**
-- **Live Face Synchronization**: Lip movement detection during voice authentication
-- **Image Upload Option**: Alternative to live camera for face authentication
-- **Profile-Specific Matching**: Enhanced accuracy through targeted model matching
-- **Confidence Scoring**: Detailed similarity percentages for authentication results
+- Each profile is linked to a trained biometric model
+- Targeted profile-based verification
 
-## 🔄 How It Works
+### Security Features
 
-### Enhanced Data Flow
+- Live lip sync verification
+- Profile-specific accuracy tuning
+- Confidence scoring on results
 
-1. **User Registration**: Multi-step signup with profile and mode selection
-2. **Authentication Mode Selection**: Choose Face, Voice, or Combined authentication
-3. **Biometric Capture**:
-   - Face: Live camera or image upload
-   - Voice: Real-time recording with lip sync verification
-   - Combined: Both modalities for maximum security
-4. **Profile-Based Processing**: Backend matches against user's selected profile
-5. **Results**: Detailed authentication results with confidence scores
+## 🔄 Authentication Flow
+
+### Process Overview
+
+1. Registration: Credentials, profile, mode selection
+2. Capture: Face and/or voice input
+3. Verification: Model-based profile matching
+4. Result: Confidence score with success/failure
 
 ### API Endpoints
 
-#### Authentication
-- `GET /api/health` - Check backend status and loaded models
-- `GET /api/profiles` - List available profiles and their capabilities
-- `POST /api/authenticate` - Combined authentication endpoint (supports face, voice, or both)
-- `POST /api/face-recognition` - Face-only authentication (legacy)
-- `POST /api/voice-recognition` - Voice-only authentication (legacy)
-
-#### Security Features
-- `POST /api/lip-sync-check` - Live face synchronization verification
+- `GET /api/health` → Backend status
+- `GET /api/profiles` → List profiles
+- `POST /api/authenticate` → Unified auth endpoint
+- `POST /api/face-recognition` → Face-only auth (legacy)
+- `POST /api/voice-recognition` → Voice-only auth (legacy)
+- `POST /api/lip-sync-check` → Lip sync verification
 
 ## 👤 User Experience Flow
 
-### New User Registration
-1. Navigate to signup page
-2. **Step 1 - Credentials**: Enter username, password, and optional email
-3. **Step 2 - Profile Selection**: Choose from available profiles (Fenny, George, Jovin)
-4. **Step 3 - Authentication Mode**: Select Face, Voice, or Combined authentication
-5. Account creation with preferences saved to Supabase
+### Registration
 
-### Authentication Process
-1. **Login**: Enter credentials
-2. **Mode Selection**: Choose authentication method (if not set during signup)
-3. **Biometric Authentication**:
-   - **Face Mode**: Use camera or upload image → facial recognition
-   - **Voice Mode**: Record voice phrase → voice recognition + lip sync check
-   - **Combined Mode**: Complete both face and voice authentication
-4. **Success**: Access granted with detailed authentication results
+1. `/signup`: Enter credentials
+2. Select a profile
+3. Choose an authentication mode
+4. Preferences saved in Supabase
+
+### Authentication
+
+1. `/login`: Enter credentials
+2. Choose authentication method
+3. Perform biometric verification
+4. Access granted on success
 
 # 3-Step Biometric Verification System
 
-## Overview
-
-This project now includes an enhanced biometric verification system with simultaneous camera/microphone capture, real-time face detection with bounding boxes, and comprehensive 3-step verification process.
-
-## New Features
+## Key Improvements
 
 ### 🎥 Simultaneous Capture
-- **Real-time video and audio capture** using a single MediaStream
-- **Continuous face detection** with live bounding box overlay
-- **Automatic permission handling** for camera and microphone access
 
-### 📦 Bounding Box Visualization
-- **Real-time face detection** using face-api.js
-- **Color-coded bounding boxes** based on confidence levels:
-   - 🟢 Green: High confidence (>80%)
-   - 🟡 Yellow: Medium confidence (60-80%)
-   - 🔴 Red: Low confidence (<60%)
-- **Live confidence scores** displayed on screen
-- **Profile name display** when face is detected
+- Real-time video/audio via MediaStream
+- Continuous face detection with bounding boxes
 
-### 🔄 3-Step Verification Process
+### 📦 Bounding Box Feedback
+
+Confidence-based color codes:
+- 🟢 >80% confidence
+- 🟡 60-80%
+- 🔴 <60%
+
+### 🔄 3-Step Verification
 
 #### Step 1: Face Verification
-- Captures high-quality image from video stream
-- Performs face recognition against selected profile
-- Shows real-time bounding boxes during capture
-- Validates face detection confidence before proceeding
+- Capture face image
+- Detect and verify face
 
 #### Step 2: Voice Verification
-- Records 5-second audio sample
-- Processes voice recognition against profile
-- Maintains video stream for visual feedback
-- Auto-stops recording after timeout
+- Record 5-second voice sample
+- Verify against profile
 
 #### Step 3: Lip Sync Verification
-- Records 4-second video with synchronized audio
-- Uses **MediaPipe** for real lip movement analysis
-- Analyzes lip landmark movements and audio correlation
-- Provides detailed analysis metrics
+- 4-second video/audio capture
+- Analyze lip movements using MediaPipe
 
-## Technical Implementation
+## 🔧 Technical Components
 
-### Frontend Components
+### Frontend
 
-#### `SimultaneousCapture.tsx`
-- Main component handling all three verification steps
-- Integrates face-api.js for real-time face detection
-- Manages MediaRecorder for audio/video capture
-- Provides visual feedback with bounding boxes
+- `SimultaneousCapture.tsx`: Captures data, runs face-api.js
+- `ThreeStepVerification.tsx`: Handles step progression, results, retries
 
-#### `ThreeStepVerification.tsx`
-- Wrapper component for the verification flow
-- Progress tracking and step management
-- Results display and retry functionality
-- Integration with signup process
+### Backend
 
-### Backend Enhancements
+- `/api/lip-sync-check`: MediaPipe-powered lip sync analysis
 
-#### Enhanced Lip Sync Endpoint (`/api/lip-sync-check`)
-- **MediaPipe integration** for facial landmark detection
-- **Real video processing** instead of simulation
-- **Lip movement analysis** using landmark coordinates
-- **Audio-visual correlation** analysis
-- **Detailed metrics** including:
-   - Duration analyzed
-   - Frames processed
-   - Movement variance
-   - Audio presence detection
+### Dependencies
 
-### Dependencies Added
-
-#### Frontend
 ```bash
+# Frontend
 npm install face-api.js @tensorflow/tfjs
-```
 
-#### Backend
-```bash
+# Backend
 pip install mediapipe opencv-python-headless
 ```
 
-### Face-API Models
-Pre-trained models are automatically downloaded to `public/models/`:
+### Face-API Models (auto-downloaded to `public/models/`)
+
 - Tiny Face Detector
-- Face Landmark 68-point
+- Face Landmarks
 - Face Recognition
 - Face Expression
 
-## Data Flow
+## 🔁 Data Flow Summary
 
-### 1. Face Verification
+**Face Verification:**
 ```
-Video Stream → Canvas Capture → Base64 Image → Backend API → Face Recognition → Result
-```
-
-### 2. Voice Verification
-```
-Audio Stream → MediaRecorder → Blob → Backend API → Voice Recognition → Result
+Video → Canvas → Base64 → API → Result
 ```
 
-### 3. Lip Sync Verification
+**Voice Verification:**
 ```
-Video + Audio → MediaRecorder → Base64 Video + Audio Blob → MediaPipe Analysis → Result
+Audio → MediaRecorder → API → Result
 ```
 
-## API Endpoints
+**Lip Sync Verification:**
+```
+Video + Audio → MediaPipe → Result
+```
 
-### Enhanced `/api/lip-sync-check`
-**Input:**
-- `video_data`: Base64 encoded video
-- `audio_data`: Audio file (WAV/WebM)
-- `duration`: Recording duration (default: 4 seconds)
+## Example API Response: `/api/lip-sync-check`
 
-**Output:**
 ```json
 {
   "success": true,
@@ -271,182 +211,122 @@ Video + Audio → MediaRecorder → Base64 Video + Audio Blob → MediaPipe Anal
 }
 ```
 
-## Signup Flow Integration
+## 🔑 Signup Flow
 
-### Updated Process
-1. **Credentials Entry** (Step 1 of 3)
-2. **Profile Selection** (Step 2 of 3)
-3. **Biometric Verification** (Step 3 of 3)
-   - Face verification with bounding boxes
-   - Voice verification with audio recording
-   - Lip sync verification with video analysis
+1. Credentials
+2. Profile selection
+3. 3-step biometric verification
 
-### User Experience
-- **Simultaneous permissions** requested at start
-- **Real-time feedback** with bounding boxes
-- **Progressive verification** with clear step indicators
-- **Retry functionality** for failed steps
-- **Detailed results** with confidence scores
+Features:
+- Simultaneous permission requests
+- Real-time bounding boxes
+- Retry failed steps
+- Confidence score feedback
 
-## Configuration
+## ⚙️ Configuration Settings
 
-### Camera Settings
-- Resolution: 640x480 (ideal)
-- Facing mode: User (front camera)
-- Frame rate: 30 FPS
+### Camera
+- 640x480 resolution, front camera, 30 FPS
 
-### Audio Settings
-- Sample rate: 44.1 kHz
-- Echo cancellation: Enabled
-- Noise suppression: Enabled
+### Audio
+- 44.1 kHz, echo cancellation, noise suppression
 
-### Face Detection Settings
+### Face Detection
 - Max faces: 1
-- Detection confidence: 0.5
-- Tracking confidence: 0.5
-- Landmark refinement: Enabled
+- Detection/tracking confidence: 0.5
+- Landmark refinement: enabled
 
-## Security Features
+## 🔐 Security Features
 
-- **Real-time validation** prevents spoofing
-- **Multi-modal verification** (face + voice + lip sync)
-- **Confidence thresholds** ensure quality
-- **Temporary file cleanup** on backend
-- **Base64 encoding** for secure data transfer
+- Real-time anti-spoofing checks
+- Multi-modal verification
+- Confidence thresholds for validity
+- Temporary file cleanup
+- Base64-secured data transfer
 
-## Browser Compatibility
+## 🌐 Browser Support
 
-- **Chrome/Edge**: Full support
-- **Firefox**: Full support
-- **Safari**: Limited MediaRecorder support
-- **Mobile browsers**: Varies by device
+- Chrome/Edge: ✅ Full support
+- Firefox: ✅ Full support
+- Safari: ⚠️ Limited
+- Mobile: Varies
 
-## Performance Considerations
+## ⚡ Performance Highlights
 
-- **Face detection**: ~10ms per frame
-- **Video processing**: Depends on duration
-- **Memory usage**: Temporary files cleaned automatically
-- **Network**: Base64 encoding increases payload size
+- Face detection ~10 ms/frame
+- Automatic temp file cleanup
+- Base64 increases data size
 
-## Troubleshooting
+## 🛠️ Troubleshooting
 
-### Common Issues
+### Common Problems
 
-1. **Camera/Mic permissions denied**
-   - Check browser permissions
-   - Ensure HTTPS in production
+- Permission issues → Check browser settings, HTTPS required
+- Detection errors → Verify models and lighting
+- Lip sync failures → Check MediaPipe and video format
 
-2. **Face detection not working**
-   - Verify models downloaded to `public/models/`
-   - Check lighting conditions
-   - Ensure face is clearly visible
+### Debugging Tips
 
-3. **Lip sync analysis fails**
-   - Verify MediaPipe installation
-   - Check video format compatibility
-   - Ensure sufficient lip movement
+- Backend logs (`python app.py`)
+- Frontend console logs
+- API request traces in browser dev tools
 
-### Debug Information
+## 🔗 Available Routes
 
-Enable debug logging by checking browser console for:
-- Face detection results
-- MediaRecorder status
-- API response details
-- Error messages with stack traces
-
-
-### Available Routes
-- `/login` - User login
-- `/signup` - Multi-step user registration
-- `/auth-mode-selection` - Choose authentication method
-- `/face-auth` - Face authentication page
-- `/voice-auth` - Voice authentication page
-- `/combined-auth` - Combined face + voice authentication
-- `/dashboard` - Protected dashboard (after successful authentication)
+- `/login`: Login page
+- `/signup`: Registration flow
+- `/auth-mode-selection`: Choose auth mode
+- `/face-auth`, `/voice-auth`, `/combined-auth`: Auth flows
+- `/dashboard`: Post-auth landing
 
 ## 🛠️ Development Workflow
 
-### Adding New People to Recognition System
+### Adding New Profiles
 
-1. **Face Recognition**:
-    - Add person's folder to `face_recog/face_dataset/`
-    - Add face images to the folder
-    - Run `python face_recog/train_face.py`
-
-2. **Voice Recognition**:
-    - Add person's folder to `voice_recog/voice_dataset/`
-    - Add voice recordings (.wav files) to the folder
-    - Run `python voice_recog/train_voice.py`
-
-3. **Restart Backend**: Restart `python app.py` to load new models
-
-### Testing the Integration
-
-1. **Backend Health Check**:
+1. Add folders to:
+   - `face_recog/face_dataset/`
+   - `voice_recog/voice_dataset/`
+2. Train:
    ```bash
-   curl http://localhost:8000/api/health
+   python face_recog/train_face.py
+   python voice_recog/train_voice.py
    ```
+3. Restart backend
 
-2. **Frontend Connection**:
-    - Open browser to `http://localhost:5173`
-    - Check browser console for any API connection errors
+### Testing
 
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Backend not starting**:
-    - Check if all Python dependencies are installed
-    - Verify port 8000 is not in use
-    - Check `.env` file exists
-
-2. **Frontend can't connect to backend**:
-    - Ensure backend is running on port 8000
-    - Check CORS settings in `app.py`
-    - Verify `.env` has correct `VITE_API_BASE_URL`
-
-3. **Recognition not working**:
-    - Ensure models are trained (`face_encodings.pkl` and `voice_embeddings.pkl` exist)
-    - Check if sample data exists in dataset folders
-    - Verify file permissions on model files
-
-### Logs and Debugging
-
-- **Backend logs**: Check terminal running `python app.py`
-- **Frontend logs**: Check browser developer console
-- **API requests**: Use browser Network tab to inspect API calls
+```bash
+curl http://localhost:8000/api/health
+```
+Frontend: Open `http://localhost:5173`
 
 ## 📁 Project Structure
 
 ```
 biometric-auth/
-├── src/
-│   ├── components/auth/       # Face & Voice auth components
-│   ├── lib/api.ts            # Backend API integration
-│   └── ...
-├── face_recog/               # Face recognition modules
-├── voice_recog/              # Voice recognition modules
-├── models/                   # Trained model files
-├── app.py                    # FastAPI server
-├── .env                      # Environment configuration
-├── package.json              # Frontend dependencies
-├── requirements.txt          # Backend dependencies
+├── src/                   # Frontend components
+│   ├── components/auth/   # Face & voice auth components
+│   ├── lib/api.ts         # API integrations
+├── face_recog/            # Face recognition
+├── voice_recog/           # Voice recognition
+├── models/                # Trained models
+├── app.py                 # FastAPI backend
+├── .env                   # Environment variables
+├── package.json           # Frontend dependencies
+├── requirements.txt       # Backend dependencies
 └── INTEGRATION_GUIDE.md
 ```
 
 ## 🔐 Security Notes
 
-- Biometric data is stored in Supabase with encryption
-- API endpoints include basic validation
-- CORS is configured for development (update for production)
-- Consider adding authentication middleware for production use
+- Biometric data encrypted in Supabase
+- CORS configured for development (adjust for production)
+- Authentication middleware recommended for production
 
 ## 🚀 Production Deployment
 
-For production deployment:
-
-1. Update CORS origins in `app.py`
-2. Set proper environment variables
-3. Use production WSGI server (gunicorn, uvicorn)
-4. Configure HTTPS for both frontend and backend
-5. Set up proper database backups for Supabase
+1. Update CORS settings
+2. Set production environment variables
+3. Use Gunicorn/Uvicorn in production
+4. Configure HTTPS
+5. Set up Supabase database backups
